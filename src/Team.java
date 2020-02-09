@@ -1,3 +1,8 @@
+import filehanlding.FileHandling;
+import filehanlding.FileHandlingException;
+import utilities.Utilities;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Team
@@ -12,9 +17,12 @@ public class Team
 
     private static final int MINIMUM_NUMBER_OF_PLAYERS = 1000;
     private static final int VARIABLE_NUMBER_OF_PLAYERS = 1000;
-    private static final int MINIMUM_LOCATION_CRITERIA = 10000;
-    private static final int VARIABLE_LOCATION_CRITERIA = 1000000;
-    private static final int RADIUS_PER_PLAYER = 10;
+    private static final int MINIMUM_LOCATION_CRITERIA = 100;
+//    private static final int MINIMUM_LOCATION_CRITERIA = 10000;
+    private static final int VARIABLE_LOCATION_CRITERIA = 900;
+//    private static final int VARIABLE_LOCATION_CRITERIA = 100000;
+    private static final float RADIUS_PER_PLAYER = 0.03f;
+//    private static final int RADIUS_PER_PLAYER = 2;
     private static final int COST_TO_REVIVE_A_PLAYER = 1000;
     private static final float MAX_HEALTH = 100;
 
@@ -31,7 +39,19 @@ public class Team
         }
         this.mX = Utilities.getRandom().nextInt(Team.VARIABLE_LOCATION_CRITERIA) + Team.MINIMUM_LOCATION_CRITERIA;
         this.mY = Utilities.getRandom().nextInt(Team.VARIABLE_LOCATION_CRITERIA) + Team.MINIMUM_LOCATION_CRITERIA;
-        this.mRadius = n * Team.RADIUS_PER_PLAYER;
+        this.mRadius = (int) ((float) n * Team.RADIUS_PER_PLAYER);
+//        this.mRadius = n * Team.RADIUS_PER_PLAYER;
+        String msg = this.mName + " is ready with " + n + " soldiers at (" + this.mX + "," + this.mY + ") with a radius " + this.mRadius;
+        try
+        {
+            FileHandling.writeToFile(msg);
+        } catch (FileHandlingException e)
+        {
+            System.out.println("There was a problem with writing in Game File");
+        } catch (IOException e)
+        {
+            System.out.println("There might be a problem with the Game File");
+        }
         System.out.println(this.mColor + this.mName + " is ready with " + n + " soldiers at (" + this.mX + "," + this.mY + ") with a radius " + this.mRadius + Utilities.ANSI_RESET);
     }
 
@@ -106,15 +126,29 @@ public class Team
 
     public void printLocation()
     {
-        System.out.println(this.mColor+this.mName+" moved to ("+this.mX+","+this.mY+")"+Utilities.ANSI_RESET);
+        if (this.mX > 0 && this.mY > 0)
+        {
+            String msg = this.mName + " moved to (" + this.mX + "," + this.mY + ")";
+            try
+            {
+                FileHandling.writeToFile(msg);
+            } catch (FileHandlingException e)
+            {
+                System.out.println("There was a problem with writing in Game File");
+            } catch (IOException e)
+            {
+                System.out.println("There might be a problem with the Game File");
+            }
+            System.out.println(this.mColor + this.mName + " moved to (" + this.mX + "," + this.mY + ")" + Utilities.ANSI_RESET);
+        }
     }
 
     public int getNumberOfAliveSoldiers()
     {
         int count = 0;
-        for(Player player : this.mPlayerArrayList)
+        for (Player player : this.mPlayerArrayList)
         {
-            if(!player.isKilled())
+            if (!player.isKilled())
             {
                 count++;
             }
@@ -130,10 +164,10 @@ public class Team
     public int revivePlayers()
     {
         int count = 0;
-        int i=0;
-        while(this.mScore>Team.COST_TO_REVIVE_A_PLAYER && i<this.mPlayerArrayList.size())
+        int i = 0;
+        while (this.mScore > Team.COST_TO_REVIVE_A_PLAYER && i < this.mPlayerArrayList.size())
         {
-            if(this.mPlayerArrayList.get(i).isKilled())
+            if (this.mPlayerArrayList.get(i).isKilled())
             {
                 this.mPlayerArrayList.get(i).setmHealth(Team.MAX_HEALTH);
                 this.mScore = this.mScore - Team.COST_TO_REVIVE_A_PLAYER;
@@ -141,7 +175,8 @@ public class Team
             }
             i++;
         }
-        this.mRadius = this.getNumberOfAliveSoldiers() * Team.RADIUS_PER_PLAYER;
+        this.mRadius = (int) ((float) this.getNumberOfAliveSoldiers() * Team.RADIUS_PER_PLAYER);
+//        this.mRadius = this.getNumberOfAliveSoldiers() * Team.RADIUS_PER_PLAYER;
         return count;
     }
 }

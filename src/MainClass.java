@@ -5,6 +5,5 @@ public class MainClass
     {
         Game game = new Game();
         game.run();
-
     }
 }

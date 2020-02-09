@@ -1,4 +1,9 @@
-import Weapons.Weapon;
+import filehanlding.FileHandling;
+import filehanlding.FileHandlingException;
+import utilities.Utilities;
+import weapons.Weapon;
+
+import java.io.IOException;
 
 public class Player
 {
@@ -163,27 +168,50 @@ public class Player
         //My mHealth and enemy mHealth
         //System.out.println(this.getmTeam().getmColor()+this.getName() + " of  "+this.mTeam.getmName()+" is attacking " + otherPlayer.getName()+" of  "+otherPlayer.getmTeam().getmName()+Utilities.ANSI_RESET);
         int damage = this.mCurrentWeapon.getDamage();
-        otherPlayer.setHealth(otherPlayer.getHealth() - ((damage) + Utilities.getRandom().nextInt(damage/2)));
-        if(otherPlayer.isKilled())
+        otherPlayer.setHealth(otherPlayer.getHealth() - ((damage) + Utilities.getRandom().nextInt(damage / 2)));
+        if (otherPlayer.isKilled())
         {
             this.setScore(this.getScore() + otherPlayer.getmRank() * Player.SCORE_INCREASE);
             this.getmTeam().increaseTeamScoreBy(otherPlayer.getmRank() * Player.SCORE_INCREASE);
+            String msg = this.getName() + " of " + this.mTeam.getmName() + " killed " + otherPlayer.getName() + " of " + otherPlayer.getmTeam().getmName();
+            try
+            {
+                FileHandling.writeToFile(msg);
+            } catch (FileHandlingException e)
+            {
+                System.out.println("There was a problem with writing in Game File");
+            } catch (IOException e)
+            {
+                System.out.println("There might be a problem with the Game File");
+            }
+            System.out.println(this.getmTeam().getmColor() + this.getName() + " of " + this.mTeam.getmName() + " killed " + otherPlayer.getName() + " of " +
+                    otherPlayer.getmTeam().getmName() + Utilities.ANSI_RESET);
             this.increaseRank(otherPlayer);
-            System.out.println(this.getmTeam().getmColor()+this.getName()+" of "+this.mTeam.getmName()+" killed "+otherPlayer.getName()+" of "+otherPlayer.getmTeam().getmName()+Utilities.ANSI_RESET);
             this.upgradeHealthAndWeapon();
         }
     }
 
     public void increaseRank(Player otherPlayer)
     {
-        if(otherPlayer.getmRank()==1)
+        if (otherPlayer.getmRank() == 1)
         {
             this.setRank(this.getmRank() + 1);
-        }
-        else
+        } else
         {
-            this.setRank(this.getmRank() + (otherPlayer.getmRank()/2));
+            this.setRank(this.getmRank() + (otherPlayer.getmRank() / 2));
         }
+        String msg = this.mName+" of "+this.mTeam.getmName()+" has upgraded their rank to "+this.mRank;
+        try
+        {
+            FileHandling.writeToFile(msg);
+        } catch (FileHandlingException e)
+        {
+            System.out.println("There was a problem with writing in Game File");
+        } catch (IOException e)
+        {
+            System.out.println("There might be a problem with the Game File");
+        }
+        System.out.println(this.mTeam.getmColor()+msg+Utilities.ANSI_RESET);
     }
 
     public void upgradeHealthAndWeapon()
@@ -200,18 +228,42 @@ public class Player
                 this.setHealth(this.getHealth() + this.getScore());
                 this.setScore(Player.MINIMUM_SCORE);
             }
-            System.out.println(this.getmTeam().getmColor()+"Health of "+this.getName()+" of team "+this.getmTeam().getmName()+" had been increased to "+this.getHealth()+Utilities.ANSI_RESET);
-        }
-        if (this.mSelectedWeapon<Utilities.getWeaponArrayList().size()-1 && Utilities.getWeaponArrayList().get(this.mSelectedWeapon+1).getPrice()<=this.mScore)
-        {
-            for(int i=Utilities.getWeaponArrayList().size()-1;i>=1;i--)
+            String msg ="Health of " + this.getName() + " of " + this.getmTeam().getmName() + " had been increased to " + this.getHealth();
+            try
             {
-                if(this.mScore>=Utilities.getWeaponArrayList().get(i).getPrice())
+                FileHandling.writeToFile(msg);
+            } catch (FileHandlingException e)
+            {
+                System.out.println("There was a problem with writing in Game File");
+            } catch (IOException e)
+            {
+                System.out.println("There might be a problem with the Game File");
+            }
+            System.out.println(this.getmTeam().getmColor() + "Health of " + this.getName() + " of " + this.getmTeam().getmName() + " had been increased to " +
+                    this.getHealth() + Utilities.ANSI_RESET);
+        }
+        if (this.mSelectedWeapon < Utilities.getWeaponArrayList().size() - 1 && Utilities.getWeaponArrayList().get(this.mSelectedWeapon + 1).getPrice() <= this.mScore)
+        {
+            for (int i = Utilities.getWeaponArrayList().size() - 1; i >= 1; i--)
+            {
+                if (this.mScore >= Utilities.getWeaponArrayList().get(i).getPrice())
                 {
                     this.setSelectedWeapon(i);
                     this.setmCurrentWeapon(Utilities.getWeaponArrayList().get(this.mSelectedWeapon));
                     this.setScore(this.getScore() - Utilities.getWeaponArrayList().get(this.mSelectedWeapon).getPrice());
-                    System.out.println(this.getmTeam().getmColor()+this.getName()+" of team "+this.getmTeam().getmName()+" upgraded their weapon to "+this.getmCurrentWeapon().getName()+Utilities.ANSI_RESET);
+                    String msg = this.getName() + " of " + this.getmTeam().getmName() + " upgraded their weapon to " + this.getmCurrentWeapon().getName();
+                    try
+                    {
+                        FileHandling.writeToFile(msg);
+                    } catch (FileHandlingException e)
+                    {
+                        System.out.println("There was a problem with writing in Game File");
+                    } catch (IOException e)
+                    {
+                        System.out.println("There might be a problem with the Game File");
+                    }
+                    System.out.println(this.getmTeam().getmColor() + this.getName() + " of " + this.getmTeam().getmName() + " upgraded their weapon to " +
+                            this.getmCurrentWeapon().getName() + Utilities.ANSI_RESET);
                     break;
                 }
             }
