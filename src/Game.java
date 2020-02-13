@@ -352,31 +352,6 @@ public class Game
         }
     }
 
-    private void playWonAudio(Team team)
-    {
-        String name = team.getmName();
-        if(name.contains("1"))
-        {
-            GameAudio.playTeam1WonSound();
-        }
-        else if(name.contains("2"))
-        {
-            GameAudio.playTeam2WonSound();
-        }
-        else if(name.contains("3"))
-        {
-            GameAudio.playTeam3WonSound();
-        }
-        else if(name.contains("4"))
-        {
-            GameAudio.playTeam4WonSound();
-        }
-        else
-        {
-            GameAudio.playTeam5WonSound();
-        }
-    }
-
     private void fight(Player[] players)
     {
         boolean attack;
